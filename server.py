@@ -2,7 +2,7 @@ from typing import List
 from fastapi import FastAPI, UploadFile, Depends, Request, HTTPException, status
 from starlette.datastructures import FormData
 import os
-import utils
+import utils, oauth
 
 tmp_dir ="TMP"
 os.makedirs(tmp_dir, exist_ok=True)
@@ -32,7 +32,7 @@ async def get_body(request: Request):
 async def root() -> dict[str, str]:
     return {"msg": "Hello World"}
 
-@app.post('/upload_body', tags=["pdf upload"])
+@app.post('/upload_body', tags=["pdf upload"], dependencies=[Depends(oauth.api_auth_key)])
 async def main(body = Depends(get_body)):
     """endpoint to upload pdf file(s))
 
