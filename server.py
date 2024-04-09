@@ -39,10 +39,10 @@ async def main(body = Depends(get_body)):
     if isinstance(body, FormData):  # if Form/File data received
         files: list = body.getlist('files')  # returns a list of UploadFile objects
         filenames = body.get("filenames")
-        print(f"filename: {filenames}")
+        print(f"filenames: {filenames}")
         if files:
-            await utils.get_multiple_documents(uploaded_files=files)
-        return {"msg": f"file {filenames} successfully uploaded to server"}
+            res = await utils.get_multiple_documents(uploaded_files=files)
+        return {"msg": f"file {filenames} successfully uploaded to server", "data": res}
     
 
 @app.post("/uploadfile/", tags=["pdf upload"])
