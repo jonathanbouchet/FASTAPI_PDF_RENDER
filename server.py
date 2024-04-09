@@ -1,11 +1,7 @@
 from typing import List
 from fastapi import FastAPI, UploadFile, Depends, Request, HTTPException, status
 from starlette.datastructures import FormData
-import os
 import utils, oauth
-
-tmp_dir ="TMP"
-os.makedirs(tmp_dir, exist_ok=True)
 
 app = FastAPI(title="pdf uploader")
 
@@ -34,7 +30,7 @@ async def root() -> dict[str, str]:
 
 @app.post('/upload_body', tags=["pdf upload"], dependencies=[Depends(oauth.api_auth_key)])
 async def main(body = Depends(get_body)):
-    """endpoint to upload pdf file(s))
+    """endpoint to upload pdf file(s)) with extra parameters
 
     :param body: pdf multi pages, filename
 
@@ -42,16 +38,11 @@ async def main(body = Depends(get_body)):
     """
     if isinstance(body, FormData):  # if Form/File data received
         files: list = body.getlist('files')  # returns a list of UploadFile objects
-        filename = body.get("filename")
-        print(f"filename: {filename}")
+        filenames = body.get("filenames")
+        print(f"filename: {filenames}")
         if files:
-            for file in files:
-                # print(f'Filename: {file.filename}. Content (first 15 bytes): {await file.read(15)}')
-                file_location = f"{tmp_dir}/{filename}"
-                with open(file_location, "wb+") as file_object:
-                    file_object.write(await file.read())
             await utils.get_multiple_documents(uploaded_files=files)
-        return {"msg": f"file {filename} successfully uploaded to server"}
+        return {"msg": f"file {filenames} successfully uploaded to server"}
     
 
 @app.post("/uploadfile/", tags=["pdf upload"])
