@@ -38,7 +38,7 @@ async def main(body = Depends(get_body)):
     """
     if isinstance(body, FormData):  # if Form/File data received
         files: list = body.getlist('files')  # returns a list of UploadFile objects
-        filenames = body.get("filenames")
+        filenames: list = body.getlist("filenames")
         print(f"filenames: {filenames}")
         if files:
             res = await utils.get_multiple_documents(uploaded_files=files)
