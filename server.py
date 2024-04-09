@@ -29,7 +29,7 @@ async def root() -> dict[str, str]:
     return {"msg": "Hello World"}
 
 @app.post('/upload_body', tags=["pdf upload"], dependencies=[Depends(oauth.api_auth_key)])
-async def main(body = Depends(get_body)):
+async def uplaod_body(body = Depends(get_body)):
     """endpoint to upload pdf file(s)) with extra parameters
 
     :param body: pdf multi pages, filename
@@ -43,6 +43,23 @@ async def main(body = Depends(get_body)):
         if files:
             res = await utils.get_multiple_documents(uploaded_files=files)
         return {"msg": f"file {filenames} successfully uploaded to server", "data": res}
+    
+
+@app.post('/create_vector_db', tags=["pdf upload"], dependencies=[Depends(oauth.api_auth_key)])
+async def create_embeddings(body = Depends(get_body)):
+    """endpoint to make text vector embeddings
+
+    :param body: pdf multi pages, filename
+
+    :return: None
+    """
+    if isinstance(body, FormData):  # if Form/File data received
+        files: list = body.getlist('files')  # returns a list of UploadFile objects
+        filenames: list = body.getlist("filenames")
+        print(f"filenames: {filenames}")
+        if files:
+            res =  await utils.create_vector_db(uploaded_files=files, filenames=filenames)
+        return {"msg": f"file {filenames} successfully uploaded to server", "sample data": res}
     
 
 @app.post("/uploadfile/", tags=["pdf upload"])
