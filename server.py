@@ -29,7 +29,7 @@ async def root() -> dict[str, str]:
     return {"msg": "Hello World"}
 
 @app.post('/upload_body', tags=["pdf upload"], dependencies=[Depends(oauth.api_auth_key)])
-async def uplaod_body(body = Depends(get_body)):
+async def upload_body(body = Depends(get_body)):
     """endpoint to upload pdf file(s)) with extra parameters
 
     :param body: pdf multi pages, filename
